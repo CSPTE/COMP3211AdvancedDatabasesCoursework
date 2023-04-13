@@ -1,0 +1,52 @@
+40:projid,40:projname,35:dept,5:deptid,5:deptname,5:manager,5
+40:projid,40:projname,35:dept,5:deptid,5:deptname,5:manager,5
+40:projid,40:projname,35:dept,5:deptid,5:deptname,5:manager,5
+
+Project
+  in:  Project:40:projid,40:projname,35:dept,5
+  out: 40:projid,40:projname,35:dept,5
+Person
+  in:  Person:400:persid,400:persname,350:age,47
+  out: 400:persid,400:persname,350:age,47
+Department
+  in:  Department:5:deptid,5:deptname,5:manager,5
+  out: 5:deptid,5:deptname,5:manager,5
+(Person) JOIN [persid=manager] (Department)
+  inl: 400:persid,400:persname,350:age,47
+  inr: 5:deptid,5:deptname,5:manager,5
+  out: 5:persid,5:persname,5:age,5:deptid,5:deptname,5:manager,5
+(Project) JOIN [dept=deptid] ((Person) JOIN [persid=manager] (Department))
+  inl: 40:projid,40:projname,35:dept,5
+  inr: 5:persid,5:persname,5:age,5:deptid,5:deptname,5:manager,5
+  out: 40:projid,40:projname,35:dept,5:persid,5:persname,5:age,5:deptid,5:deptname,5:manager,5
+SELECT [persname="Smith"] ((Project) JOIN [dept=deptid] ((Person) JOIN [persid=manager] (Department)))
+  in:  40:projid,40:projname,35:dept,5:persid,5:persname,5:age,5:deptid,5:deptname,5:manager,5
+  out: 8:projid,8:projname,8:dept,5:persid,5:persname,1:age,5:deptid,5:deptname,5:manager,5
+PROJECT [projname,deptname] (SELECT [persname="Smith"] ((Project) JOIN [dept=deptid] ((Person) JOIN [persid=manager] (Department))))
+  in:  8:projid,8:projname,8:dept,5:persid,5:persname,1:age,5:deptid,5:deptname,5:manager,5
+  out: 8:projname,8:deptname,5
+
+
+Person
+  in:  Person:400:persid,400:persname,350:age,47
+  out: 400:persid,400:persname,350:age,47
+Project
+  in:  Project:40:projid,40:projname,35:dept,5
+  out: 40:projid,40:projname,35:dept,5
+Department
+  in:  Department:5:deptid,5:deptname,5:manager,5
+  out: 5:deptid,5:deptname,5:manager,5
+(Project) JOIN [dept=deptid] (Department)
+  inl: 40:projid,40:projname,35:dept,5
+  inr: 5:deptid,5:deptname,5:manager,5
+  out: 40:projid,40:projname,35:dept,5:deptid,5:deptname,5:manager,5
+(Person) JOIN [persid=manager] ((Project) JOIN [dept=deptid] (Department))
+  inl: 400:persid,400:persname,350:age,47
+  inr: 40:projid,40:projname,35:dept,5:deptid,5:deptname,5:manager,5
+  out: 40:persid,5:persname,40:age,40:projid,40:projname,35:dept,5:deptid,5:deptname,5:manager,5
+SELECT [persname="Smith"] ((Person) JOIN [persid=manager] ((Project) JOIN [dept=deptid] (Department)))
+  in:  40:persid,5:persname,40:age,40:projid,40:projname,35:dept,5:deptid,5:deptname,5:manager,5
+  out: 1:persid,1:persname,1:age,1:projid,1:projname,1:dept,1:deptid,1:deptname,1:manager,1
+PROJECT [projname,deptname] (SELECT [persname="Smith"] ((Person) JOIN [persid=manager] ((Project) JOIN [dept=deptid] (Department))))
+  in:  1:persid,1:persname,1:age,1:projid,1:projname,1:dept,1:deptid,1:deptname,1:manager,1
+  out: 1:projname,1:deptname,1
